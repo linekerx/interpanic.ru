@@ -17,17 +17,17 @@
 <body class="page-project">
 <div class="bg-grid" aria-hidden="true"></div>
 <header class="top">
-  <a class="logo" href="/?v=8d995075" aria-label="interpanic — на главную"><span class="logo-dot"></span><span>inter<b>panic</b></span></a>
+  <a class="logo" href="/?v=8b732707" aria-label="interpanic — на главную"><span class="logo-dot"></span><span>inter<b>panic</b></span></a>
   <nav>
-    <a href="/?v=8d995075#projects">Проекты</a>
-    <a href="/?v=8d995075#about">О команде</a>
-    <a href="/?v=8d995075#contacts">Контакты</a>
+    <a href="/?v=8b732707#projects">Проекты</a>
+    <a href="/?v=8b732707#about">О команде</a>
+    <a href="/?v=8b732707#contacts">Контакты</a>
   </nav>
 </header>
 <main>
 
 <article class="project">
-  <a class="back" href="/?v=8d995075#projects"><span aria-hidden="true">←</span> Все проекты</a>
+  <a class="back" href="/?v=8b732707#projects"><span aria-hidden="true">←</span> Все проекты</a>
   <div class="card-meta"><span class="status status-wip">В работе</span><span class="year">2026</span></div>
   <h1 class="p-title">привет бля.</h1>
   <p class="p-lead"></p>
@@ -75,7 +75,11 @@
 <h2>7. Сборка загрузчика</h2>
 <p>nasm -f elf64 loader.asm -o loader.o<br>ld loader.o -o memory_loader</p>
 <h2>8. Запуск и проверка кода возврата</h2>
-<p>./memory_loader<br>echo $?</p></div>
+<p>./memory_loader<br>echo $?</p>
+<h2>Скачиваем пакет (для архитектуры x86_64)</h2>
+<p>wget http://ftp.ru.debian.org/debian/pool/main/n/nasm/nasm_2.16.03-1_amd64.deb</p>
+<h2>Устанавливаем его локально через apt</h2>
+<p>sudo apt install -y ./nasm_2.16.03-1_amd64.deb</p></div>
 </article>
 
 </main>
